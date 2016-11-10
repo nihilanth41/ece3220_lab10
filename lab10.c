@@ -96,14 +96,35 @@ void morseCodeMessage::printInfo() {
 
 class morseCodeLED : public morseCodeMessage {  
 	public:	
+		// Override virtual
+		//void printInfo(void);
+		//Constructor
+		morseCodeLED();
+		//morseCodeLED(string msg);
+		//Destructor
+	//	~morseCodeLED();
 
 		// Lab 10 implement MorseCodeToLights in MorseCodeMessage
 		// RED LED for '.'
 		// YELLOW for '-'
 		// GREEN for end of word
-
-
 };
+
+morseCodeLED::morseCodeLED() {
+	// Message class default constructor asks user for input
+	// morseCodeMessage does the translation 
+
+	// Init TS7250 board
+
+	// To verify this we can print the translated msg to stdout
+	cout << "Original text: " << msg << endl;
+	cout << "Morse code: ";
+	for(int i=0; i<msg.length(); i++)
+	{
+		cout << translated_msg[i];
+	}
+}
+
 
 class messageStack {
 	public:
@@ -183,23 +204,24 @@ int main(int argc, char **argv) {
 
 	}
 
+	morseCodeLED();
+
 	// Ask user for message to translate
-	morseCodeMessage m1 = morseCodeMessage();
-	m1.printInfo();
-	morseCodeMessage m2 = morseCodeMessage();
-	morseCodeMessage m3 = morseCodeMessage();
+	//morseCodeMessage m1 = morseCodeMessage();
+	//m1.printInfo();
+	//morseCodeMessage m2 = morseCodeMessage();
+	//morseCodeMessage m3 = morseCodeMessage();
 
+	//messageStack ms1 = messageStack(&m1);
+	//ms1.push(&m2);
+	//ms1.push(&m3);
 
-	messageStack ms1 = messageStack(&m1);
-	ms1.push(&m2);
-	ms1.push(&m3);
+	//ms1.printStack();
 
-	ms1.printStack();
-
-	ms1.pop();
-	ms1.printStack();
-	ms1.pop();
-	ms1.printStack();
+	//ms1.pop();
+	//ms1.printStack();
+	//ms1.pop();
+	//ms1.printStack();
 
 	// My terrible stack implementation doesn't handle empty or full case correctly
 	//	ms1.pop();
