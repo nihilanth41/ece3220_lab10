@@ -1,5 +1,11 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <cstdio>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -95,6 +101,12 @@ void morseCodeMessage::printInfo() {
 }
 
 class morseCodeLED : public morseCodeMessage {  
+	private:
+		int fd;
+		unsigned long *baseptr;
+		// Data register, data-direction register
+		unsigned long *PBDR,*PBDDR;
+		void gpio_init(void);
 	public:	
 		// Override virtual
 		//void printInfo(void);
@@ -110,11 +122,36 @@ class morseCodeLED : public morseCodeMessage {
 		// GREEN for end of word
 };
 
+void morseCodeLED::gpio_init(void) {
+	fd = open("/dev/mem", O_RDWR|O_SYNC);	// open the special file /dem/mem
+	if(fd == -1){
+		printf("\nError: cannot open /dev/mem.\nAre you root?\n");
+		exit(-1);  // failed open
+	}
+
+	// We need to map Address 0x80840000 (beginning of the page)
+	baseptr = (unsigned long*)mmap(NULL,4096,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0x80840000);
+	if(baseptr == MAP_FAILED){
+		printf("\nError: Unable to map memory space \n");
+		exit(-2);
+	}  // failed mmap
+
+	// To access other registers in the page, we need to offset the base pointer to reach the
+	// corresponding addresses. Those can be found in the board's manual.
+	PBDR = baseptr + 1;	// Address of port B DR is 0x80840004
+	PBDDR = baseptr + 5;	// Address of port B DDR is 0x80840014
+	
+	*PBDDR &= 0xFFFFFFFE;	// configures port B0 as input (first push button). You could use: &= ~0x01
+	// Set B5-B7 as output
+	*PBDDR |= 0xE0;
+	// All LED off
+	*PBDR &= 0x00;
+}
+
 morseCodeLED::morseCodeLED() {
 	// Message class default constructor asks user for input
 	// morseCodeMessage does the translation 
 
-	// Init TS7250 board
 
 	// To verify this we can print the translated msg to stdout
 	cout << "Original text: " << msg << endl;
@@ -123,6 +160,9 @@ morseCodeLED::morseCodeLED() {
 	{
 		cout << translated_msg[i];
 	}
+	// Set pushbutton 1 as input, 3 LED outputs.
+	gpio_init();
+
 }
 
 
