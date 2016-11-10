@@ -3,17 +3,13 @@
 
 using namespace std;
 
-// Lab 10 implement MorseCodeToLights in MorseCodeMessage
-// RED LED for '.'
-// YELLOW for '-'
-// GREEN for end of word
+
 
 // Input: 'Word'
 // output: e.g. .... . ._.. etc
 // See L14
 
 #define NUM_LETTERS 26
-
 string Letters = "abcdefghijklmnopqrstuvwxyz";
 string mCode[] = { ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.." };
 
@@ -22,12 +18,12 @@ class Message {
 	protected: string msg;
 
 	public:
-		virtual void printInfo(void);
-		// Constructors
-		Message();
-		Message(string m);
-		//Destructor
-		~Message();
+		   virtual void printInfo(void);
+		   // Constructors
+		   Message();
+		   Message(string m);
+		   //Destructor
+		   ~Message();
 };
 
 Message::Message() { 
@@ -49,16 +45,12 @@ void Message::printInfo(void) {
 
 Message::~Message() {
 }
-	
-
 
 class morseCodeMessage : public Message {
-	private:
+	protected: 
 		string *translated_msg;
 		void translate();
 	public:
-
-
 		// Override virtual:
 		void printInfo();
 		// Constructor
@@ -90,7 +82,6 @@ void morseCodeMessage::translate() {
 		}
 	}
 }
-		
 
 void morseCodeMessage::printInfo() {
 	cout << "Original text: " << msg << endl;
@@ -102,6 +93,17 @@ void morseCodeMessage::printInfo() {
 	cout << endl;
 	cout << endl;
 }
+
+class morseCodeLED : public morseCodeMessage {  
+	public:	
+
+		// Lab 10 implement MorseCodeToLights in MorseCodeMessage
+		// RED LED for '.'
+		// YELLOW for '-'
+		// GREEN for end of word
+
+
+};
 
 class messageStack {
 	public:
@@ -128,14 +130,14 @@ messageStack::messageStack(Message *m) {
 void messageStack::printStack(void) {
 	cout << "Stack top index: " << stack_top_index << endl;
 	cout << "-------------------" << endl;
-	
+
 	for(int i=stack_top_index; i<10; i++)
 	{
 		cout << "Current index: " << i << endl;
 		stack[i]->printInfo();
 	}
 }
-		
+
 
 void messageStack::pop(void) {
 	if(num_obj == 0)
@@ -167,8 +169,7 @@ void messageStack::push(Message *m) {
 		stack[--stack_top_index] = m;
 	}
 	num_obj++;
-
-	}
+}
 
 
 int main(int argc, char **argv) {
@@ -194,18 +195,18 @@ int main(int argc, char **argv) {
 	ms1.push(&m3);
 
 	ms1.printStack();
-	
+
 	ms1.pop();
 	ms1.printStack();
 	ms1.pop();
 	ms1.printStack();
 
-// My terrible stack implementation doesn't handle empty or full case correctly
-//	ms1.pop();
-//	ms1.printStack();
+	// My terrible stack implementation doesn't handle empty or full case correctly
+	//	ms1.pop();
+	//	ms1.printStack();
 
-//	ms1.push(&m1);
-//	ms1.printStack();
+	//	ms1.push(&m1);
+	//	ms1.printStack();
 
 	return 0;
 }
