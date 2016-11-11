@@ -109,17 +109,14 @@ class morseCodeLED : public morseCodeMessage {
 		void gpio_init(void);
 	public:	
 		// Override virtual
-		//void printInfo(void);
+		void printInfo(void);
 		//Constructor
 		morseCodeLED();
 		//morseCodeLED(string msg);
 		//Destructor
 	//	~morseCodeLED();
 
-		// Lab 10 implement MorseCodeToLights in MorseCodeMessage
-		// RED LED for '.'
-		// YELLOW for '-'
-		// GREEN for end of word
+
 };
 
 void morseCodeLED::gpio_init(void) {
@@ -135,6 +132,7 @@ void morseCodeLED::gpio_init(void) {
 		printf("\nError: Unable to map memory space \n");
 		exit(-2);
 	}  // failed mmap
+	close(fd);
 
 	// To access other registers in the page, we need to offset the base pointer to reach the
 	// corresponding addresses. Those can be found in the board's manual.
@@ -151,8 +149,6 @@ void morseCodeLED::gpio_init(void) {
 morseCodeLED::morseCodeLED() {
 	// Message class default constructor asks user for input
 	// morseCodeMessage does the translation 
-
-
 	// To verify this we can print the translated msg to stdout
 	cout << "Original text: " << msg << endl;
 	cout << "Morse code: ";
@@ -162,9 +158,58 @@ morseCodeLED::morseCodeLED() {
 	}
 	// Set pushbutton 1 as input, 3 LED outputs.
 	gpio_init();
-
 }
 
+void morseCodeLED::printInfo(void) {
+	// Lab 10 implement MorseCodeToLights in MorseCodeMessage
+	//for each string in array
+	for(int i=0; i<translated_msg->length(); i++)
+	{
+		string mc = translated_msg[i];
+		//for each char in string
+		for(int j=0; j<mc.length(); j++)
+		{
+			char c = mc[j];
+			if(c == '.')
+			{
+				// RED LED => B5
+				cout << "Red" << endl;
+				// Turn on B5
+				*PBDR |= 0x20;
+				// Delay 0.5 seconds between morse code characters 
+				usleep(500000);
+				// Off
+				*PBDR &= ~0x20;
+			}
+			else if(c == '-') 
+			{
+				// YELLOW LED => B6 
+				cout << "Yellow" << endl;
+				// On
+				*PBDR |= 0x40;
+				// Delay 0.5 seconds between morse code characters 
+				usleep(500000);
+				// Off
+				*PBDR &= ~0x40;
+			}
+			else 
+			{
+				cout << "Character not morse code: " << c << endl;
+			}
+		}
+		// Delay 1 second between ascii characters
+		sleep(1);
+	}
+	// Pulse green LED to signify the end of the word
+	// GREEN LED => B7
+	cout << "Green" << endl;
+	// On
+	*PBDR |= 0x80;
+	// Delay 1 second
+	sleep(1);
+	// Off
+	*PBDR |= 0x80;
+}
 
 class messageStack {
 	public:
