@@ -156,6 +156,7 @@ morseCodeLED::morseCodeLED() {
 	{
 		cout << translated_msg[i];
 	}
+	cout << "\n";
 	// Set pushbutton 1 as input, 3 LED outputs.
 	gpio_init();
 }
@@ -174,9 +175,9 @@ void morseCodeLED::printInfo(void) {
 			if(c == '.')
 			{
 				// RED LED => B5
-				cout << "Red" << endl;
 				// Turn on B5
 				*PBDR |= 0x20;
+				cout << "Red" << endl;
 				// Delay 0.5 seconds between morse code characters 
 				usleep(500000);
 				// Off
@@ -185,9 +186,9 @@ void morseCodeLED::printInfo(void) {
 			else if(c == '-') 
 			{
 				// YELLOW LED => B6 
-				cout << "Yellow" << endl;
 				// On
 				*PBDR |= 0x40;
+				cout << "Yellow" << endl;
 				// Delay 0.5 seconds between morse code characters 
 				usleep(500000);
 				// Off
@@ -203,13 +204,16 @@ void morseCodeLED::printInfo(void) {
 	}
 	// Pulse green LED to signify the end of the word
 	// GREEN LED => B7
-	cout << "Green" << endl;
 	// On
 	*PBDR |= 0x80;
+	cout << "Green" << endl;
 	// Delay 1 second
 	sleep(1);
 	// Off
 	*PBDR |= 0x80;
+	
+	// All LED off
+	*PBDR &= 0x00;
 }
 
 class messageStack {
