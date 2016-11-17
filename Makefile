@@ -1,2 +1,2 @@
 lab10:
-	g++ -g lab10.cpp -o lab10.bin 
+	g++ -g -std=c++0x lab10.cpp -o lab10.bin 

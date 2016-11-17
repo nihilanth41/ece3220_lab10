@@ -163,12 +163,13 @@ morseCodeLED::morseCodeLED() {
 void morseCodeLED::printInfo(void) {
 	// Lab 10 implement MorseCodeToLights in MorseCodeMessage
 	//for each string in array
-	for(int i=0; i<translated_msg->length(); i++)
+	for(int i=0; i<msg.length(); i++)
 	{
 		string mc = translated_msg[i];
 		//for each char in string
 		for(int j=0; j<mc.length(); j++)
 		{
+			usleep(500000);
 			char c = mc[j];
 			if(c == '.')
 			{
@@ -289,7 +290,8 @@ int main(int argc, char **argv) {
 
 	}
 
-	morseCodeLED();
+	morseCodeLED l1 = morseCodeLED();
+	l1.printInfo();
 
 	// Ask user for message to translate
 	//morseCodeMessage m1 = morseCodeMessage();
